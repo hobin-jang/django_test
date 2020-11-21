@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="container">
+    <form method="POST">
+      {% csrf_token %}
+      제목 : 
+      <input name="Title" type="text" value="">
+      <br><br>
+      내용 :
+      <textarea cols=50 rows=30 name="Body"></textarea>
+      <br><br>
+      <input class="btn btn-primary" type="submit" value="글 저장">
+    </form>
+  </div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container">
+  <h2> 제목 : {{contents_detail.title}}
+  <h4> {{contents_detail.date}}
+  <p> 내용 <br> {{contents_detail.body}}</p>
+  <br><br>
+
+  <form method="POST">
+    {% csrf_token %}
+    댓글 :
+    <input name="body" type="text" value="">
+    <input class="btn btn-primary" type="submit" value="저장">
+  </form>
+
+  {% for comment in comments %}
+  {{comment.body}}
+  <br>
+  {% endfor %}
+  
+</div>
+{% endblock %}
