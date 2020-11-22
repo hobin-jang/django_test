@@ -4,6 +4,8 @@
   {% for contents in posts %}
     <div class="container">
     <a href="{% url 'detail' contents.id %}">{{contents.title}}</a>
+    - {{contents.writer}} - {{contents.date}}
+    <br><br>
     </div>
   {% endfor %}
 

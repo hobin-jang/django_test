@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Content, Comment
 from django.utils import timezone
 from django.core.paginator import Paginator
+from django.contrib.auth.models import User
 
 # Create your views here.
 
@@ -20,7 +21,9 @@ def detail(request, contents_id):
   if (request.method=="POST"):
     comment = Comment()
     comment.body = request.POST['body']
-    comment.post = #??????
+    comment.post = contents_detail
+    comment.writer = request.user
+    comment.date = timezone.now()
     comment.save()
 
   return render(request, 'detail.html', {'contents_detail':contents_detail, 'comments':comments})
