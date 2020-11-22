@@ -20,7 +20,7 @@ def detail(request, contents_id):
   if (request.method=="POST"):
     comment = Comment()
     comment.body = request.POST['body']
-    comment.post = contents_id
+    comment.post = #??????
     comment.save()
 
   return render(request, 'detail.html', {'contents_detail':contents_detail, 'comments':comments})
