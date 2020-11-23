@@ -3,6 +3,7 @@ from .models import Content, Comment
 from django.utils import timezone
 from django.core.paginator import Paginator
 from django.contrib.auth.models import User
+from django.contrib import messages
 
 # Create your views here.
 
@@ -34,7 +35,54 @@ def create(request):
       contents.title = request.POST['Title']
       contents.body = request.POST['Body']
       contents.date = timezone.now()
+      contents.writer = request.user
+      try:
+        contents.image = request.FILES['Image']
+      except:
+        contents.image = None
       contents.save()
       return redirect('/detail/'+str(contents.id))
     else:
       return render(request,'new.html')
+
+def delete(request, contents_id):
+  contents = Content.objects.get(id=contents_id)
+
+  if(request.user == contents.writer):
+    contents.delete()
+    return redirect('home')
+  else:
+    return redirect('/detail/'+str(contents.id))
+
+def update(request, contents_id):
+  contents = Content.objects.get(id=contents_id)
+
+  if(request.user ==contents.writer):
+
+    if(request.method=="POST"):
+      contents.title = request.POST['Title']
+      contents.body = request.POST['Body']
+      contents.date = timezone.now()
+      contents.writer = request.user
+      try:
+        contents.image = request.FILES['Image']
+      except:
+        contents.image = None
+      contents.save()
+      return redirect('/detail/'+str(contents.id))
+
+    else:
+      return render(request, 'update.html')
+
+  else:
+    return redirect('/detail/'+str(contents.id))
+
+def comment_delete(request, comment_id):
+  comment = Comment.objects.get(id=comment_id)
+  contents = Content.objects.get(id=comment.post.id)
+
+  if(request.user == comment.writer):
+    comment.delete()
+    return redirect('/detail/'+str(contents.id))
+  else:
+    return redirect('/detail/'+str(contents.id))

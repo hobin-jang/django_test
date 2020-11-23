@@ -6,8 +6,21 @@
   <h4> {{contents_detail.date}}
   <p> 내용 <br> {{contents_detail.body}}</p>
   <br><br>
+  {% if contents_detail.image %}
+    <img src="{{contents_detail.image.url}}">
+  {% endif %}
 
+  <br><br>
   {% if user.is_authenticated %}
+
+    <div class="modify">
+      <a href="{% url 'delete' contents_detail.id %}">삭제</a>
+      <a href="{% url 'update' contents_detail.id %}">수정</a>
+    </div>
+    <p> 수정이랑 삭제는 사용자만 가능합니다. (어떻게 올바른 사용자에게만 보이게 만들지?? 나중에 꾸밀 때 hidden 써보기)
+    <br><br>
+    
+
     <form method="POST">
       {% csrf_token %}
       댓글 :
@@ -18,6 +31,7 @@
 
   {% for comment in comments %}
   {{comment.body}} - {{comment.writer}} - {{comment.date}}
+  <a href="{% url 'comment_delete' comment.id %}">삭제</a>
   <br>
   {% endfor %}
   

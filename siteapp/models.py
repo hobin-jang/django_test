@@ -7,8 +7,12 @@ from django.utils import timezone
 class Content(models.Model):
   title = models.CharField(max_length=20)
   body = models.TextField()
-  date = models.DateTimeField()
+  date = models.DateTimeField(default=timezone.now)
   writer = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True)
+  image = models.ImageField(upload_to="images/", null=True, blank=True)
+
+  class Meta:
+    ordering = ['-date',]
 
   def __str__(self):
     return self.title
@@ -18,3 +22,6 @@ class Comment(models.Model):
   body = models.TextField()
   date = models.DateTimeField(default=timezone.now)
   writer = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True)
+
+  class Meta:
+    ordering = ['-date',]
