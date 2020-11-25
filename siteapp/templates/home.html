@@ -1,14 +1,19 @@
 {% extends 'base.html' %}
 {% block content %}
-
-  {% for contents in posts %}
+  <!--글-->
+  {% for post in posts %}
     <div class="container">
-    <a href="{% url 'detail' contents.id %}">{{contents.title}}</a>
-    - {{contents.writer}} - {{contents.date}}
+    <a href="{% url 'detail' post.id %}">{{post.title}}</a>
+    - {{post.writer}} - {{post.date}}
+    {% for key, value in comment_num.items %}
+      {% if key == post.id %}
+        (댓글 수 : {{value}})
+      {% endif %}
+    {% endfor %}
     <br><br>
     </div>
-  {% endfor %}
-  
+  {% endfor %} 
+  <!--pagenation-->
   {% if posts.has_previous %}
     <a href="?page=1">First</a>
     <a href="?page={{posts.previous_page_number}}">Previous</a>

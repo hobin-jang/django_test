@@ -2,8 +2,10 @@
 {% block content %}
 
 <div class="container">
+  <a href="{% url 'home' %}">home</a>
+  <!-- 원글 -->
   <h2> 제목 : {{contents_detail.title}}
-  <h4> {{contents_detail.date}}
+  <h4> 글쓴이 : {{contents_detail.writer}} 날짜 : {{contents_detail.date}}
   <p> 내용 <br> {{contents_detail.body}}</p>
   <br><br>
   {% if contents_detail.image %}
@@ -12,27 +14,58 @@
 
   <br><br>
   {% if user.is_authenticated %}
-
+    
+    <!-- 글 삭제 수정-->
+    {% if user.id == contents_detail.writer.id %}
     <div class="modify">
       <a href="{% url 'delete' contents_detail.id %}">삭제</a>
       <a href="{% url 'update' contents_detail.id %}">수정</a>
     </div>
-    <p> 수정이랑 삭제는 사용자만 가능합니다. (어떻게 올바른 사용자에게만 보이게 만들지?? 나중에 꾸밀 때 hidden 써보기)
     <br><br>
-    
+    {% endif %}
 
+    <!--댓글 달기-->
     <form method="POST">
       {% csrf_token %}
       댓글 :
       <input name="body" type="text" value="">
       <input class="btn btn-primary" type="submit" value="저장">
     </form>
+    <br><br>
   {% endif %}
 
   {% for comment in comments %}
+  <!--댓글 출력-->
   {{comment.body}} - {{comment.writer}} - {{comment.date}}
-  <a href="{% url 'comment_delete' comment.id %}">삭제</a>
-  <br>
+
+    {% if user.is_authenticated %}
+      <!--댓글 삭제-->
+      {% if user.id == comment.writer.id %}
+        <a href="{% url 'comment_delete' comment.id %}">삭제</a>
+      {% endif %}
+      <!--대댓글 달기-->
+      <form method="POST" action="{% url 'recomment' comment.id %}">
+        {% csrf_token %}
+        대댓글 : 
+        <input name='body' type="text" value="">
+        <input class = "btn btn-primary" type="submit" value="저장">
+      </form>
+    {% endif %}
+
+    {% for recomment in recomments %}
+      <!--대댓글 출력-->
+      {% if recomment.comment.id == comment.id %}
+      ------ {{recomment.body}} - {{recomment.writer}} - {{recomment.date}}
+        <!--대댓글 삭제-->
+        {% if user.is_authenticated %}
+          {% if user.id == recomment.writer.id %}
+            <a href="{% url 'recomment_delete' recomment.id %}">삭제(대댓)</a>
+          {% endif %}
+        {% endif %}
+        <br>
+      {% endif %}
+    {% endfor %}
+    <br><br>
   {% endfor %}
   
 </div>

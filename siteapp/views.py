@@ -1,10 +1,10 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Content, Comment
+from .models import Content, Comment, Recomment
 from django.utils import timezone
 from django.core.paginator import Paginator
 from django.contrib.auth.models import User
 from django.contrib import messages
-
+from django.template.defaulttags import register
 # Create your views here.
 
 def home(request):
@@ -12,8 +12,13 @@ def home(request):
   content_list = Content.objects.all()
   paginator = Paginator(content_list,5)
   page = request.GET.get('page')
-  posts = paginator.get_page(page) 
-  return render(request,'home.html',{'contents':contents, 'posts':posts})
+  posts = paginator.get_page(page)
+  
+  comment_num={}
+  for Post in posts:
+    comment_num[Post.id] = Comment.objects.filter(post = Post).count()
+
+  return render(request,'home.html',{'contents':contents, 'posts':posts, 'comment_num':comment_num})
 
 def detail(request, contents_id):
   contents_detail = get_object_or_404(Content, pk=contents_id)
@@ -27,7 +32,9 @@ def detail(request, contents_id):
     comment.date = timezone.now()
     comment.save()
 
-  return render(request, 'detail.html', {'contents_detail':contents_detail, 'comments':comments})
+  recomments = Recomment.objects.all()
+
+  return render(request, 'detail.html', {'contents_detail':contents_detail, 'comments':comments, 'recomments':recomments})
 
 def create(request):
     if(request.method=="POST"):
@@ -86,3 +93,25 @@ def comment_delete(request, comment_id):
     return redirect('/detail/'+str(contents.id))
   else:
     return redirect('/detail/'+str(contents.id))
+
+def recomment(request, comment_id):
+  comment = get_object_or_404(Comment, pk=comment_id)
+  recomments = Recomment.objects.filter(comment=comment_id)
+
+  if(request.method=="POST"):
+    recomment = Recomment()
+    recomment.comment = comment
+    recomment.body = request.POST['body']
+    recomment.writer = request.user
+    recomment.date = timezone.now()
+    recomment.save()
+  
+  return redirect('/detail/'+str(comment.post.id), {'recomments':recomments})
+
+def recomment_delete(request, recomment_id):
+  recomment = Recomment.objects.get(id=recomment_id)
+  if(request.user == recomment.writer):
+    recomment.delete()
+    return redirect('/detail/'+str(recomment.comment.post.id))
+  else:
+    return redirect('/detail/'+str(recomment.comment.post.id))

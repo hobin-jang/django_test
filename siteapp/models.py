@@ -25,3 +25,12 @@ class Comment(models.Model):
 
   class Meta:
     ordering = ['-date',]
+
+class Recomment(models.Model):
+  comment = models.ForeignKey(Comment, on_delete=models.CASCADE, null=True)
+  body = models.TextField()
+  date = models.DateTimeField(default=timezone.now)
+  writer = models.ForeignKey('auth.user', on_delete=models.CASCADE, null=True)
+
+  class Meta:
+    ordering = ['-date',]
