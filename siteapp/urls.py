@@ -13,5 +13,6 @@ urlpatterns = [
     path('comment_delete/<int:comment_id>', views.comment_delete, name="comment_delete"),
     path('recomment/<int:comment_id>', views.recomment, name="recomment"),
     path('recomment_delete/<int:recomment_id>',views.recomment_delete, name="recomment_delete"),
+    path('contents_like/<int:contents_id>',views.like, name="contents_like"),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

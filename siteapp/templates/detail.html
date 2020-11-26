@@ -11,9 +11,19 @@
   {% if contents_detail.image %}
     <img src="{{contents_detail.image.url}}">
   {% endif %}
+  <p> 좋아요 : {{contents_detail.like_count}} 댓글 : {{comments_num}}
 
   <br><br>
   {% if user.is_authenticated %}
+
+    <!--좋아요 기능-->
+    <a href="{% url 'contents_like' contents_detail.id %}">
+      {% if contents_detail in user.profile.like_contents.all %}
+        취소
+      {% else %}
+       좋아요
+      {% endif %}
+    </a>
     
     <!-- 글 삭제 수정-->
     {% if user.id == contents_detail.writer.id %}
@@ -35,7 +45,7 @@
   {% endif %}
 
   {% for comment in comments %}
-  <!--댓글 출력-->
+  <!--댓글 출력(최신순)-->
   {{comment.body}} - {{comment.writer}} - {{comment.date}}
 
     {% if user.is_authenticated %}
@@ -53,7 +63,7 @@
     {% endif %}
 
     {% for recomment in recomments %}
-      <!--대댓글 출력-->
+      <!--대댓글 출력(최신순)-->
       {% if recomment.comment.id == comment.id %}
       ------ {{recomment.body}} - {{recomment.writer}} - {{recomment.date}}
         <!--대댓글 삭제-->

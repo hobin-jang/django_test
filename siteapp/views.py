@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Content, Comment, Recomment
+from .models import Content, Comment, Recomment, Profile
 from django.utils import timezone
 from django.core.paginator import Paginator
 from django.contrib.auth.models import User
@@ -23,6 +23,7 @@ def home(request):
 def detail(request, contents_id):
   contents_detail = get_object_or_404(Content, pk=contents_id)
   comments = Comment.objects.filter(post = contents_id)
+  comments_num = comments.count()
 
   if (request.method=="POST"):
     comment = Comment()
@@ -34,7 +35,7 @@ def detail(request, contents_id):
 
   recomments = Recomment.objects.all()
 
-  return render(request, 'detail.html', {'contents_detail':contents_detail, 'comments':comments, 'recomments':recomments})
+  return render(request, 'detail.html', {'contents_detail':contents_detail, 'comments':comments, 'comments_num':comments_num, 'recomments':recomments})
 
 def create(request):
     if(request.method=="POST"):
@@ -115,3 +116,20 @@ def recomment_delete(request, recomment_id):
     return redirect('/detail/'+str(recomment.comment.post.id))
   else:
     return redirect('/detail/'+str(recomment.comment.post.id))
+
+def like(request, contents_id):
+  contents = get_object_or_404(Content, id=contents_id)
+  user = request.user
+  profile = Profile.objects.get(user=user)
+  like_contents = profile.like_contents.filter(id=contents_id)
+
+  if like_contents.exists():
+    profile.like_contents.remove(contents)
+    contents.like_count -= 1
+    contents.save()
+  else:
+    profile.like_contents.add(contents)
+    contents.like_count += 1
+    contents.save()
+  
+  return redirect('/detail/'+str(contents.id))
