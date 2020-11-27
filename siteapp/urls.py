@@ -5,6 +5,7 @@ from django.conf.urls.static import static
 from . import views
 
 urlpatterns = [
+    #path('board/<int:board_id>', views.board, name="board"),
     path('', views.home, name="home"),
     path('detail/<int:contents_id>', views.detail, name="detail"),
     path('create/', views.create, name="create"),

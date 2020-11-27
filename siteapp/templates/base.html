@@ -34,21 +34,15 @@
                     <input type="hidden">
                   </form>
               </li>
-
-              </ul>
-        </div>
-      </nav>
             {% else %}
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'login' %}">로그인</a>
+                <a class="nav-link" href="{% url 'login' %}">로그인</a></li>
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'signup' %}">회원가입</a>
-
-                </ul>
+                <a class="nav-link" href="{% url 'signup' %}">회원가입</a></li>
+            {% endif %}
+          </ul>
         </div>
       </nav>
-            {% endif %}
-
 
       <div class="container">
       {% block content %}

@@ -10,6 +10,12 @@ class Profile(models.Model):
 
   def __str__(self):
     return str(self.user)
+
+class Board(models.Model):
+  title = models.CharField(max_length=20)
+
+  def __str__(self):
+    return self.title
     
 class Content(models.Model):
   title = models.CharField(max_length=20)
@@ -18,8 +24,10 @@ class Content(models.Model):
   writer = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True)
   image = models.ImageField(upload_to="images/", null=True, blank=True)
 
+  comment_count = models.PositiveIntegerField(default=0)
   like_count = models.PositiveIntegerField(default=0)
-  profile = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True)
+
+  board = models.ForeignKey(Board, on_delete = models.CASCADE, null=True)
 
   class Meta:
     ordering = ['-date',]
@@ -40,7 +48,7 @@ class Recomment(models.Model):
   comment = models.ForeignKey(Comment, on_delete=models.CASCADE, null=True)
   body = models.TextField()
   date = models.DateTimeField(default=timezone.now)
-  writer = models.ForeignKey('auth.user', on_delete=models.CASCADE, null=True)
+  writer = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True)
 
   class Meta:
     ordering = ['-date',]

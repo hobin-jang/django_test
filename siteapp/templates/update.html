@@ -16,6 +16,13 @@
       <input name="Image" type="file">
       <br><br>
 
+      게시판 : 
+      {% for board in Board %}
+        <input type="radio" name='Board' value="{{board.id}}">
+        {{board.title}}
+      {% endfor %}
+      <br><br>
+
       <input class="btn btn-primary" type="submit" value="글 수정">
     </form>
   </div>
