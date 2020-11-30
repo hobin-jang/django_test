@@ -14,14 +14,8 @@ def home(request):
   page = request.GET.get('page')
   posts = paginator.get_page(page)
   board = Board.objects.all()
-  
-  comment_num={}
-  for Post in posts:
-    comment_num[Post.id] = Comment.objects.filter(post = Post).count()
 
-  return render(request,'home.html',{'contents':contents, 'posts':posts, 'comment_num':comment_num, 'Board':board})
-
-#def board(request, board_id):
+  return render(request,'home.html',{'contents':contents, 'posts':posts, 'Board':board})
 
 def detail(request, contents_id):
   contents = get_object_or_404(Content, pk=contents_id)
@@ -38,8 +32,9 @@ def detail(request, contents_id):
     comment.save()
 
   recomments = Recomment.objects.all()
+  boards = Board.objects.all()
 
-  return render(request, 'detail.html', {'contents':contents, 'comments':comments, 'recomments':recomments})
+  return render(request, 'detail.html', {'contents':contents, 'comments':comments, 'recomments':recomments, 'boards':boards})
 
 def create(request):
   global board
@@ -146,3 +141,18 @@ def like(request, contents_id):
     contents.save()
   
   return redirect('/detail/'+str(contents.id))
+
+def go_board(request):
+  boards = Board.objects.all()
+  
+  return render(request,'go_board.html',{'boards':boards})
+
+def board(request,board_id):
+  contents = Content.objects.filter(board = board_id)
+  paginator = Paginator(contents,3)
+  page = request.GET.get('page')
+  posts = paginator.get_page(page)
+  boards = Board.objects.all()
+  now_board = board_id
+
+  return render(request,'board.html',{'posts':posts,'boards':boards,'now_board':now_board})

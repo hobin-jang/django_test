@@ -3,6 +3,9 @@
 
 <div class="container">
   <a href="{% url 'home' %}">home</a>
+  {% for board in boards %}
+    <a href="{% url 'board' board.id %}">{{board.title}}</a>
+  {% endfor %}
   <!-- 원글 -->
   <h2> 제목 : {{contents.title}}
   <h4> 글쓴이 : {{contents.writer}} 날짜 : {{contents.date}}
