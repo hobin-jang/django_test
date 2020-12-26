@@ -4,6 +4,7 @@
     <form method="POST" enctype="multipart/form-data">
       {% csrf_token %}
       
+      <!--주석
       제목 : 
       <input name="Title" type="text" value="">
       <br><br>
@@ -15,6 +16,11 @@
       업로드 :
       <input name="Image" type="file">
       <br><br>
+      -->
+
+      <table>
+        {{form.as_table}}
+      </table>
 
       게시판 : 
       {% for board in Board %}

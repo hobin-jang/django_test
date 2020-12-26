@@ -1,14 +1,18 @@
 {% extends 'base.html' %}
 {% block content %}
-  <div class="container">
+<div class="container">
+  {% for board in Board %}
+    <a href="{% url 'board' board.id %}">{{board.title}}</a>
+  {% endfor %}
+  <br><br>
   <!--글(최신순 정렬)-->
   {% for post in posts %}
     <a href="{% url 'detail' post.id %}">{{post.title}}</a>
-    - {{post.writer}} - {{post.date}} - (좋아요 : {{post.like_count}})
+    - {{post.writer}} - {{post.date | date:'Y-m-d H:i'}} - (좋아요 : {{post.like_count}})
     - (댓글 : {{post.comment_count}})
     - 게시판 : <a href="{% url 'board' post.board.id %}">{{post.board.title}}</a>
     <br><br>
-  {% endfor %} 
+  {% endfor %}
   <!--pagenation-->
   {% if posts.has_previous %}
     <a href="?page=1">First</a>
@@ -21,6 +25,6 @@
     <a href="?page={{posts.next_page_number}}">Next</a>
     <a href="?page={{posts.paginator.num_pages}}">Last</a>
   {% endif %}
-  </div>
+</div>
 
 {% endblock %}

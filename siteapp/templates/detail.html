@@ -8,7 +8,7 @@
   {% endfor %}
   <!-- 원글 -->
   <h2> 제목 : {{contents.title}}
-  <h4> 글쓴이 : {{contents.writer}} 날짜 : {{contents.date}}
+  <h4> 글쓴이 : {{contents.writer}} 날짜 : {{contents.date | date:'Y-m-d H:i'}}
   <p> 내용 <br> {{contents.body}}</p>
   <br><br>
   {% if contents.image %}
@@ -49,7 +49,7 @@
 
   {% for comment in comments %}
   <!--댓글 출력(최신순)-->
-  {{comment.body}} - {{comment.writer}} - {{comment.date}}
+  {{comment.body}} - {{comment.writer}} - {{comment.date | date:'Y-m-d H:i'}}
 
     {% if user.is_authenticated %}
       <!--댓글 삭제-->
@@ -68,7 +68,7 @@
     {% for recomment in recomments %}
       <!--대댓글 출력(최신순)-->
       {% if recomment.comment.id == comment.id %}
-      ------ {{recomment.body}} - {{recomment.writer}} - {{recomment.date}}
+      ------ {{recomment.body}} - {{recomment.writer}} - {{recomment.date | date:'Y-m-d H:i'}}
         <!--대댓글 삭제-->
         {% if user.is_authenticated %}
           {% if user.id == recomment.writer.id %}

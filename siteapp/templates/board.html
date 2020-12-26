@@ -2,11 +2,17 @@
 {% block content %}
 
   <div class="container">
-  <a href="{% url 'home' %}">HOME</a><br><br>
+  <a href="{% url 'home' %}">HOME</a>
+  {% for board in boards %}
+    {% if board.id != now_board %}
+      <a href="{% url 'board' board.id %}">{{board.title}}</a>
+    {% endif %}
+  {% endfor %}
+  <br><br>
   <!--글(최신순 정렬)-->
   {% for post in posts %}
     <a href="{% url 'detail' post.id %}">{{post.title}}</a>
-    - {{post.writer}} - {{post.date}} - (좋아요 : {{post.like_count}})
+    - {{post.writer}} - {{post.date | date:'Y-m-d H:i'}} - (좋아요 : {{post.like_count}})
     - (댓글 : {{post.comment_count}})
     <br><br>
   {% endfor %}
@@ -22,14 +28,6 @@
     <a href="?page={{posts.next_page_number}}">Next</a>
     <a href="?page={{posts.paginator.num_pages}}">Last</a>
   {% endif %}
-
-  <br><br>
-  {% for board in boards %}
-    {% if board.id != now_board %}
-      <a href="{% url 'board' board.id %}">{{board.title}}</a>
-      <br>
-    {% endif %}
-  {% endfor %}
   </div>
   
 {% endblock %}

@@ -5,6 +5,7 @@ from django.core.paginator import Paginator
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.template.defaulttags import register
+from .forms import Content_Form
 # Create your views here.
 
 def home(request):
@@ -16,6 +17,14 @@ def home(request):
   board = Board.objects.all()
 
   return render(request,'home.html',{'contents':contents, 'posts':posts, 'Board':board})
+
+def profile(request):
+  profile = Profile.objects.get(user = request.user)
+  likes = profile.like_contents.all()
+  if request.method=="POST":
+    profile.image = request.FILES['Image']
+    profile.save()
+  return render(request,'profile.html',{'profile':profile, 'likes':likes})
 
 def detail(request, contents_id):
   contents = get_object_or_404(Content, pk=contents_id)
@@ -39,22 +48,30 @@ def detail(request, contents_id):
 def create(request):
   global board
   if(request.method=="POST"):
-    board = Board.objects.all()
-    contents = Content()
+    """contents = Content()
     contents.title = request.POST['Title']
     contents.body = request.POST['Body']
     contents.date = timezone.now()
     contents.writer = request.user
+    board = Board.objects.all()
     contents.board = Board.objects.get(id=request.POST['Board'])
     try:
       contents.image = request.FILES['Image']
     except:
       contents.image = None
-    contents.save()
-    return redirect('/detail/'+str(contents.id),{'Board':board})
-  else:
+    contents.save()"""
     board = Board.objects.all()
-    return render(request,'new.html',{'Board':board})
+    form = Content_Form(request.POST, request.FILES)
+    if form.is_valid():
+      contents = form.save(commit=False)
+      contents.board = Board.objects.get(id=request.POST['Board'])
+      contents.writer = request.user
+      contents = form.save()
+    return redirect('/detail/'+str(contents.id),{'Board':board,'form':form})
+  else:
+    form = Content_Form()
+    board = Board.objects.all()
+    return render(request,'new.html',{'Board':board,'form':form})
 
 def delete(request, contents_id):
   contents = Content.objects.get(id=contents_id)
@@ -69,24 +86,31 @@ def update(request, contents_id):
   contents = Content.objects.get(id=contents_id)
   global board
   if(request.user ==contents.writer):
-
     if(request.method=="POST"):
-      board = Board.objects.all()
-      contents.title = request.POST['Title']
+      """contents.title = request.POST['Title']
       contents.body = request.POST['Body']
       contents.date = timezone.now()
       contents.writer = request.user
+      board = Board.objects.all()
       contents.board = Board.objects.get(id=request.POST['Board'])
       try:
         contents.image = request.FILES['Image']
       except:
         contents.image = None
-      contents.save()
-      return redirect('/detail/'+str(contents.id),{'Board':board})
+      contents.save()"""
+      board = Board.objects.all()
+      form = Content_Form(request.POST, request.FILES, instance=contents)
+      if form.is_valid():
+        contents = form.save(commit=False)
+        contents.board = Board.objects.get(id=request.POST['Board'])
+        contents.writer = request.user
+        contents = form.save()
+      return redirect('/detail/'+str(contents.id),{'Board':board,'form':form})
 
     else:
+      form = Content_Form(instance=contents)
       board = Board.objects.all()
-      return render(request, 'update.html',{'Board':board})
+      return render(request, 'update.html',{'Board':board, 'form':form})
 
   else:
     board = Board.objects.all()
@@ -144,7 +168,6 @@ def like(request, contents_id):
 
 def go_board(request):
   boards = Board.objects.all()
-  
   return render(request,'go_board.html',{'boards':boards})
 
 def board(request,board_id):
