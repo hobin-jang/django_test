@@ -13,7 +13,13 @@
       <br>
       <br>
       <input class="btn btn-primary" type="submit" value="로그인">
+      <br>
+      <br>
     </form>
+
+    {% load socialaccount %}
+    {% providers_media_js %}
+    <a href="{% provider_login_url 'google' %}">구글 로그인</a>
 
     {% if error %}
     {{error}}

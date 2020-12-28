@@ -5,7 +5,7 @@ from django.utils import timezone
 # Create your models here.
 
 class Profile(models.Model):
-  user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
+  user = models.OneToOneField('auth.User', on_delete=models.CASCADE, null=True)
   like_contents = models.ManyToManyField('Content', blank=True, related_name='like_users')
   image = models.ImageField(upload_to="profile_image/", null=True, blank=True)
 

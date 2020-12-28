@@ -3,7 +3,10 @@ from .models import Content, Comment, Recomment, Profile, Board
 from django.utils import timezone
 from django.core.paginator import Paginator
 from django.contrib.auth.models import User
-from django.contrib import messages
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.hashers import check_password
+from django.contrib.auth import update_session_auth_hash
+from django.contrib import messages, auth
 from django.template.defaulttags import register
 from .forms import Content_Form
 # Create your views here.
@@ -15,6 +18,13 @@ def home(request):
   page = request.GET.get('page')
   posts = paginator.get_page(page)
   board = Board.objects.all()
+  
+  if request.user.is_authenticated:
+    user = User.objects.get(id=request.user.id)
+    try:
+      profile = Profile.objects.get(user_id=user.id)
+    except:
+      Profile.objects.create(user=user)
 
   return render(request,'home.html',{'contents':contents, 'posts':posts, 'Board':board})
 
@@ -25,6 +35,42 @@ def profile(request):
     profile.image = request.FILES['Image']
     profile.save()
   return render(request,'profile.html',{'profile':profile, 'likes':likes})
+
+def change_password(request):
+  """
+  if request.method == "POST":
+    form = PasswordChangeForm(request.user, request.POST)
+    if form.is_valid():
+      user = form.save()
+      update_session_auth_hash(request, user)
+      messages.success(request, 'Password successfully changed')
+      return redirect('profile')
+    else:
+      messages.error(request, 'Password not changed')
+  else:
+    form = PasswordChangeForm(request.user)
+  return render(request, 'change_password.html',{'form':form})"""
+
+  if request.method == "POST":
+    user = request.user
+    origin_password = request.POST["origin_password"]
+    if check_password(origin_password, user.password):
+      new_password = request.POST["new_password"]
+      confirm_password = request.POST["confirm_password"]
+      if new_password == confirm_password:
+        user.set_password(new_password)
+        user.save()
+        auth.login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+        return redirect('profile')
+      else:
+        messages.error(request, 'Password not same')
+    else:
+      messages.error(request, 'Password not correct')
+    return render(request, 'change_password.html')
+  else:
+    return render(request, 'change_password.html')
+
+    
 
 def detail(request, contents_id):
   contents = get_object_or_404(Content, pk=contents_id)
@@ -179,3 +225,4 @@ def board(request,board_id):
   now_board = board_id
 
   return render(request,'board.html',{'posts':posts,'boards':boards,'now_board':now_board})
+

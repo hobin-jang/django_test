@@ -18,5 +18,6 @@ urlpatterns = [
     path('recomment_delete/<int:recomment_id>',views.recomment_delete, name="recomment_delete"),
     path('contents_like/<int:contents_id>',views.like, name="contents_like"),
     path('profile/',views.profile, name="profile"),
+    path('change_password/',views.change_password, name="re_password"),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
