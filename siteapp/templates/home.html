@@ -7,14 +7,15 @@
   <br><br>
   
   <!--정렬-->
-  <form id="searchForm" method="GET" action="{% url 'home' %}">
+  <form method="GET" action="{% url 'home' %}">
   <div class="col-4">
-    <select id="sort-select" onchange = "location = this.value;">
+    <select name="sort">
       <option value="">정렬기준</option>
       <option value="/">최신순</option>
-      <option value="?sort=likes">좋아요순</option>
-      <option value="?sort=comments">댓글순</option>
+      <option value="likes">좋아요순</option>
+      <option value="comments">댓글순</option>
     </select>
+    <button class="btn btn-primary" type="submit" value="">정렬</button>
   </div>
   </form>
 
@@ -42,19 +43,4 @@
 </div>
 {% endblock %}
 
-{% block scripts %}
-<script type='text/javascript'>
-$(document).ready(function(){
-    $(".page-link").on('click', function() {
-        $("#page").val($(this).data("page"));
-        $("#searchForm").submit();
-    });
 
-    $(".sort").on('change', function() {
-        $("#sort").val($(this).val());
-        $("#page").val(1);
-        $("#searchForm").submit();
-    });
-});
-</script>
-{% endblock %}

@@ -12,10 +12,7 @@ from .forms import Content_Form
 # Create your views here.
 
 def home(request):
-  sort = request.GET.get('sort','')
-  contents = Content.objects
-  content_list = Content.objects.all()
-
+  sort = request.GET.get("sort",'')
   if sort == 'likes':
     content_list = Content.objects.all().order_by('-like_count','-date')
   elif sort ==  'comments':
@@ -35,7 +32,7 @@ def home(request):
     except:
       Profile.objects.create(user=user)
 
-  return render(request,'home.html',{'contents':contents, 'posts':posts, 'Board':board})
+  return render(request,'home.html',{'posts':posts, 'Board':board})
 
 def profile(request):
   profile = Profile.objects.get(user = request.user)
