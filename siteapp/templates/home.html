@@ -5,6 +5,19 @@
     <a href="{% url 'board' board.id %}">{{board.title}}</a>
   {% endfor %}
   <br><br>
+  
+  <!--정렬-->
+  <form id="searchForm" method="GET" action="{% url 'home' %}">
+  <div class="col-4">
+    <select id="sort-select" onchange = "location = this.value;">
+      <option value="">정렬기준</option>
+      <option value="/">최신순</option>
+      <option value="?sort=likes">좋아요순</option>
+      <option value="?sort=comments">댓글순</option>
+    </select>
+  </div>
+  </form>
+
   <!--글(최신순 정렬)-->
   {% for post in posts %}
     <a href="{% url 'detail' post.id %}">{{post.title}}</a>
@@ -13,6 +26,7 @@
     - 게시판 : <a href="{% url 'board' post.board.id %}">{{post.board.title}}</a>
     <br><br>
   {% endfor %}
+
   <!--pagenation-->
   {% if posts.has_previous %}
     <a href="?page=1">First</a>
@@ -26,5 +40,21 @@
     <a href="?page={{posts.paginator.num_pages}}">Last</a>
   {% endif %}
 </div>
+{% endblock %}
 
+{% block scripts %}
+<script type='text/javascript'>
+$(document).ready(function(){
+    $(".page-link").on('click', function() {
+        $("#page").val($(this).data("page"));
+        $("#searchForm").submit();
+    });
+
+    $(".sort").on('change', function() {
+        $("#sort").val($(this).val());
+        $("#page").val(1);
+        $("#searchForm").submit();
+    });
+});
+</script>
 {% endblock %}

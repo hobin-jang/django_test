@@ -12,8 +12,17 @@ from .forms import Content_Form
 # Create your views here.
 
 def home(request):
+  sort = request.GET.get('sort','')
   contents = Content.objects
   content_list = Content.objects.all()
+
+  if sort == 'likes':
+    content_list = Content.objects.all().order_by('-like_count','-date')
+  elif sort ==  'comments':
+    content_list = Content.objects.all().order_by('-comment_count','-date')
+  else:
+    content_list = Content.objects.all()
+
   paginator = Paginator(content_list,5)
   page = request.GET.get('page')
   posts = paginator.get_page(page)
@@ -70,12 +79,9 @@ def change_password(request):
   else:
     return render(request, 'change_password.html')
 
-    
-
 def detail(request, contents_id):
-  contents = get_object_or_404(Content, pk=contents_id)
+  contents = get_object_or_404(Content, id=contents_id)
   comments = Comment.objects.filter(post = contents_id)
-  contents.comment_count = comments.count()
 
   if (request.method=="POST"):
     comment = Comment()
@@ -83,11 +89,12 @@ def detail(request, contents_id):
     comment.post = contents
     comment.writer = request.user
     comment.date = timezone.now()
-    contents.comment_count += 1
     comment.save()
 
   recomments = Recomment.objects.all()
   boards = Board.objects.all()
+  contents.comment_count = comments.count()
+  contents.save()
 
   return render(request, 'detail.html', {'contents':contents, 'comments':comments, 'recomments':recomments, 'boards':boards})
 
