@@ -9,17 +9,31 @@
   <!--정렬-->
   <form method="GET" action="{% url 'home' %}">
   <div class="col-4">
-    <select name="sort">
-      <option value="">정렬기준</option>
-      <option value="/">최신순</option>
-      <option value="likes">좋아요순</option>
-      <option value="comments">댓글순</option>
+    <select name="sort" id="sort">
+      <option value="recently" id="recently">최신순</option>
+      <option value="likes" id="likes">좋아요순</option>
+      <option value="comments" id="comments">댓글순</option>
     </select>
     <button class="btn btn-primary" type="submit" value="">정렬</button>
   </div>
+
+  <!--pagenation-->
+  <div class="pagination">
+    {% if posts.has_previous %}
+      <a href="?page=1&sort={{sort}}">First</a>
+      <a href="?page={{posts.previous_page_number}}&sort={{sort}}">Previous</a>
+    {% endif %}
+
+    <span>{{posts.number}} / {{posts.paginator.num_pages}}</span>
+
+    {% if posts.has_next %}
+      <a href="?page={{posts.next_page_number}}&sort={{sort}}">Next</a>
+      <a href="?page={{posts.next_page_number}}&sort={{sort}}">Last</a>
+    {% endif %}
+  </div>
   </form>
 
-  <!--글(최신순 정렬)-->
+  <!--글-->
   {% for post in posts %}
     <a href="{% url 'detail' post.id %}">{{post.title}}</a>
     - {{post.writer}} - {{post.date | date:'Y-m-d H:i'}} - (좋아요 : {{post.like_count}})
@@ -28,19 +42,14 @@
     <br><br>
   {% endfor %}
 
-  <!--pagenation-->
-  {% if posts.has_previous %}
-    <a href="?page=1">First</a>
-    <a href="?page={{posts.previous_page_number}}">Previous</a>
-  {% endif %}
-
-  <span>{{posts.number}} / {{posts.paginator.num_pages}}</span>
-
-  {% if posts.has_next %}
-    <a href="?page={{posts.next_page_number}}">Next</a>
-    <a href="?page={{posts.paginator.num_pages}}">Last</a>
-  {% endif %}
+  <!--검색-->
+  <form method="GET" action="{% url 'search' %}">
+  <div id="search">
+    <input name="search" type="text">
+    <button class="btn btn-primary" type="submit">검색</button>
+  </div>
+  </form>
 </div>
-{% endblock %}
 
+{% endblock %}
 

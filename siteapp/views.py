@@ -8,20 +8,21 @@ from django.contrib.auth.hashers import check_password
 from django.contrib.auth import update_session_auth_hash
 from django.contrib import messages, auth
 from django.template.defaulttags import register
+from django.db.models import Q
 from .forms import Content_Form
 # Create your views here.
 
 def home(request):
-  sort = request.GET.get("sort",'')
+  sort = request.GET.get('sort','')
   if sort == 'likes':
     content_list = Content.objects.all().order_by('-like_count','-date')
   elif sort ==  'comments':
     content_list = Content.objects.all().order_by('-comment_count','-date')
   else:
-    content_list = Content.objects.all()
-
+    content_list = Content.objects.all().order_by('-date')
+    
   paginator = Paginator(content_list,5)
-  page = request.GET.get('page')
+  page = request.GET.get('page','')
   posts = paginator.get_page(page)
   board = Board.objects.all()
   
@@ -32,7 +33,23 @@ def home(request):
     except:
       Profile.objects.create(user=user)
 
-  return render(request,'home.html',{'posts':posts, 'Board':board})
+  return render(request,'home.html',{'posts':posts, 'Board':board, 'sort':sort})
+
+def search(request):
+  content_list = Content.objects.all()
+  search = request.GET.get('search','')
+  if search:
+    search_list = content_list.filter(
+      Q(title__icontains = search) | #제목
+      Q(body__icontains = search) | #내용
+      Q(writer__username__icontains = search) #글쓴이
+    )
+  paginator = Paginator(search_list,5)
+  page = request.GET.get('page','')
+  posts = paginator.get_page(page)
+  board = Board.objects.all()
+
+  return render(request, 'search.html',{'posts':posts, 'Board':board, 'search':search})
 
 def profile(request):
   profile = Profile.objects.get(user = request.user)

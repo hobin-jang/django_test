@@ -19,5 +19,6 @@ urlpatterns = [
     path('contents_like/<int:contents_id>',views.like, name="contents_like"),
     path('profile/',views.profile, name="profile"),
     path('change_password/',views.change_password, name="re_password"),
+    path('search/',views.search, name="search"),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
